@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { userSession } from './auth';
-import { Storage } from '@stacks/storage';
+import { Storage,  } from '@stacks/storage';
 
 const storage = new Storage({ userSession });
 const TASKS_FILENAME = 'tasks.json';
@@ -85,3 +85,21 @@ export const fetchTasks = async (userSession, username) => {
     }
   }
 };
+
+
+export const vote = async () => {
+  const link = await storage.putFile('vote-v1.json', userSession.loadUserData().decentralizedID, {
+    encrypt: false,
+  });
+
+  const headers = new Headers()
+  headers.append('content-type', 'application/json')
+
+  return fetch(process.env.REACT_APP_ENDPOINT + '/add-vote', {
+    method: 'POST',
+    body: JSON.stringify({
+      vote_public_link: link,
+    }),
+    headers
+  })
+}
