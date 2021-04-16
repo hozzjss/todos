@@ -24,7 +24,10 @@ app.post('/add-vote', async (req, res) => {
 
   const extractedGaiaAddress = link.match(bitcoinAddressRegex);
 
-  const didAlreadyVote = db.getData('/voting/gaiaUrls/' + extractedGaiaAddress);
+  let didAlreadyVote = false;
+  try {
+    didAlreadyVote = db.getData('/voting/gaiaUrls/' + extractedGaiaAddress);
+  } catch (e) {}
 
   if (didAlreadyVote) {
     return res.status(400).json({error: 'you already voted'});
