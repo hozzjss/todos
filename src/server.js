@@ -15,7 +15,6 @@ app.use(json());
 const gaiaLinkRegex = /^https:\/\/[\d\w\.\/]+vote-v1.json$/;
 const didRegex = /^did:btc-addr:[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/;
 const bitcoinAddressRegex = /[13][a-km-zA-HJ-NP-Z1-9]{25,34}/;
-console.log(db.count('/voting/votes'))
 app.post('/add-vote', async (req, res) => {
   const link = req.body.vote_public_link;
   if (!gaiaLinkRegex.test(req.body.vote_public_link)) {
@@ -52,8 +51,12 @@ app.post('/add-vote', async (req, res) => {
 });
 
 app.get('/votes-count', (req, res) => {
+  let count = 0
+  try {
+    count = db.count('/voting/votes')
+  } catch (e) {}
   res.json({
-    count: db.count('/voting/votes')
+    count,
   });
 })
 
